@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"database/sql"
@@ -7,7 +7,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func main() {
+func Sqlite() {
 	//打开数据库，如果不存在，则创建
 	db, err := sql.Open("sqlite3", "./foo.db")
 	checkErr(err)
