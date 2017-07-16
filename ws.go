@@ -1,7 +1,7 @@
 package main
 
 import (
-	"code.google.com/p/go.Net/websocket"
+	"golang.org/x/net/websocket"
 	"fmt"
 	"log"
 	"net/http"
@@ -19,9 +19,9 @@ func Echo(ws *websocket.Conn) {
 			break
 		}
 
-		fmt.Println("Received back from client: " + reply)
+		fmt.Println("recieve ws data: " + reply)
 
-		msg := "Received:  " + reply
+		msg := "Response data " + reply
 		fmt.Println("Sending to client: " + msg)
 
 		if err = websocket.Message.Send(ws, msg); err != nil {
