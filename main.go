@@ -2,20 +2,26 @@ package main
 
 import (
 	"fmt"
-	"./api"
+	_ "github.com/go-sql-driver/mysql"
+	"database/sql"
 )
 
 func main() {
-	api.Sqlite()
-	fmt.Println("do sqlite ok")
-	api.Mysql()
-	fmt.Println("do mysql ok")
+	fmt.Println("==========")
+	db, err := sql.Open("mysql", "root:root@/golang")
+	checkErr(err)
 
-	userName, b := "saber", 2
-	fmt.Println("userName=", userName)
-	fmt.Println("b=", b)
+	stmt, err := db.Prepare(`INSERT user (user_name,user_age,user_sex) values (?,?,?)`)
+	checkErr(err)
+	res, err := stmt.Exec("tony", 20, 1)
+	checkErr(err)
+	id, err := res.LastInsertId()
+	checkErr(err)
+	fmt.Println("id=", id)
+}
 
-	userName, c := "archer", 3
-	fmt.Println("userName=", userName)
-	fmt.Println("c=", c)
+func checkErr(err error) {
+	if err != nil {
+		panic(err)
+	}
 }

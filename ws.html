@@ -1,66 +1,84 @@
-<!DOCTYPE html>
-<meta charset="utf-8"/>
-<title>WebSocket Test</title>
-<script language="javascript" type="text/javascript">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Test websocket server</title>
+</head>
+<body>
+<h1 style="text-align:center"><font size="16px">Welcome | websocket-based chat server</font></h1><br/>
+<div style="text-align:center">
+    <input id="text" style="width:200px;" type="text"/>
+    <button onclick="send()">发送</button>
+    <button onclick="closeSocket()">退出聊天</button>
+    <div id="message"></div>
+</div>
 
-    var wsUri = "ws://localhost:1234/socket";
-    var output;
+<div style="position: fixed; bottom: 0; text-align: center">
+    <strong>Author:hztaoran</strong><br/>
+    <strong>Github:https://github.com/Lemonjing</strong></br>
+    <strong>2017-7-16 Ryan Tao All Rights Reserved.</strong><br/><br/>
+</div>
 
-    function init() {
-        output = document.getElementById("output");
-        testWebSocket();
+</body>
+
+<script type="text/javascript">
+    var websocket = null;
+
+    // 判断当前浏览器是否支持WebSocket
+    if ('WebSocket' in window) {
+        websocket = new WebSocket("ws://localhost:8083/websocket");
+    } else {
+        alert('Not Support WebSocket');
     }
 
-    function testWebSocket() {
-        websocket = new WebSocket(wsUri);
-        websocket.onopen = function (evt) {
-            onOpen(evt)
-        };
-        websocket.onmessage = function (evt) {
-            onMessage(evt)
-        };
-        websocket.onclose = function (evt) {
-            onClose(evt)
-        };
-        websocket.onerror = function (evt) {
-            onError(evt)
-        };
+    // 连接成功建立的回调方法
+    websocket.onopen = function(event) {
+        onOpen(event);
     }
 
-    function onOpen(evt) {
-        writeToScreen("CONNECTED");
-        doSend("WebSocket data from client");
+    // 接收到消息的回调方法
+    websocket.onmessage = function(event) {
+        onMessage(event);
     }
 
-    function onClose(evt) {
+    // 连接发生错误的回调方法
+    websocket.onerror = function(event) {
+        onError(event);
+    }
+
+    // 连接关闭的回调方法
+    websocket.onclose = function(event) {
+        onClose(event);
+        alert('connection closed');
+    }
+
+    // 监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+    window.onbeforeunload = function() {
+        onClose();
+    }
+
+    function onOpen(event) {
+        document.getElementById('message').innerHTML = 'Tip: Connection established';
+    }
+
+    function onMessage(event) {
+        document.getElementById('message').innerHTML += '<br/>' + event.data;
+    }
+
+    function onError(event) {
+        alert(event.data);
+    }
+
+    // 关闭连接
+    function onClose() {
         websocket.close();
-        writeToScreen("DISCONNECTED");
     }
 
-    function onMessage(evt) {
-        writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data + '</span>');
-    }
-
-    function onError(evt) {
-        writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
-    }
-
-    function doSend(message) {
-        writeToScreen("SENT: " + message);
+    // 发送消息
+    function send() {
+        var message = document.getElementById('text').value;
         websocket.send(message);
     }
 
-    function writeToScreen(message) {
-        var pre = document.createElement("p");
-        pre.style.wordWrap = "break-word";
-        pre.innerHTML = message;
-        output.appendChild(pre);
-    }
-
-    window.addEventListener("load", init, false);
-
 </script>
 
-<h2>WebSocket Test</h2>
-
-<div id="output"></div>
+</html>

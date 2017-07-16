@@ -11,7 +11,6 @@ func Echo(ws *websocket.Conn) {
 	var err error
 
 	for {
-
 		var reply string
 
 		if err = websocket.Message.Receive(ws, &reply); err != nil {
@@ -21,7 +20,7 @@ func Echo(ws *websocket.Conn) {
 
 		fmt.Println("recieve ws data: " + reply)
 
-		msg := "Response data " + reply
+		msg := "Response data:" + reply + "order list"
 		fmt.Println("Sending to client: " + msg)
 
 		if err = websocket.Message.Send(ws, msg); err != nil {
@@ -32,14 +31,14 @@ func Echo(ws *websocket.Conn) {
 }
 
 func main() {
-	fmt.Println("begin")
+	fmt.Println("websocket backend begin")
 	http.Handle("/", http.FileServer(http.Dir("."))) // <-- note this line
 
-	http.Handle("/socket", websocket.Handler(Echo))
+	http.Handle("/websocket", websocket.Handler(Echo))
 
-	if err := http.ListenAndServe(":1234", nil); err != nil {
+	if err := http.ListenAndServe(":8083", nil); err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
 
-	fmt.Println("end")
+	fmt.Println("websocket backend end")
 }

@@ -7,12 +7,12 @@ import (
 )
 
 func Mysql() {
-	query()
-	update()
+	insert()
 }
 
 // insert
 func insert() {
+	fmt.Println("==========")
 	db, err := sql.Open("mysql", "root:root@/golang")
 	checkErr(err)
 
@@ -62,7 +62,7 @@ func update() {
 
 //删除数据
 func remove() {
-	db, err := sql.Open("mysql", "root:@/test?charset=utf8")
+	db, err := sql.Open("mysql", "root:root@/golang")
 	checkErr(err)
 
 	stmt, err := db.Prepare(`DELETE FROM user WHERE user_id=?`)
@@ -72,4 +72,10 @@ func remove() {
 	num, err := res.RowsAffected()
 	checkErr(err)
 	fmt.Println(num)
+}
+
+func checkErr(err error) {
+	if err != nil {
+		panic(err)
+	}
 }
